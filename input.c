@@ -8,7 +8,14 @@
 
 // }
 
-static void parseArgs(int argNum, char **args, char *filePath)
+struct Input
+{
+    bool isatty;
+    FILE *fp;
+};
+
+
+static void parseArgs(int argNum, char **args)
 {
     int opt;
     while((opt = getopt(argNum, args, "a:b:c")) != -1)
@@ -16,13 +23,13 @@ static void parseArgs(int argNum, char **args, char *filePath)
         switch(opt)
         {
             case 'a': 
-                printf("Option '-%c' was provided with argument: %s" ,opt ,optarg);
+                printf("Option '-%c' was provided with argument: %s\n" ,opt ,optarg);
                 break;
             case 'b': 
-                printf("Option '-%c' was provided with argument: %s" ,opt ,optarg);
+                printf("Option '-%c' was provided with argument: %s\n" ,opt ,optarg);
                 break;
             case 'c': 
-                printf("Option '-%c' was provided" ,opt);
+                printf("Option '-%c' was provided\n" ,opt);
                 break;
             case '?':
                 if (optopt == 'a' || optopt == 'b')
@@ -40,38 +47,44 @@ static void parseArgs(int argNum, char **args, char *filePath)
         }
     }
 
-    filePath = args[optind];
 }
 
-FILE* open(int argNum, char **args)
+Input* readInput(int argc, char **args)
 {
-    if (argNum == 1)
+    if (argc == 1)
     {
         char temp;
         while(1)
         {
-            scanf("%c" ,temp);
+            scanf("%c" ,&temp);
             printf("%c" ,temp);
         }
     }
 
-    char *filePath = NULL;
-    parseArgs(argNum, args, filePath);
-    FILE *fp;
-    if (isatty(0))
+    parseArgs(argc, args);
+    if (argc == optind)
     {
-        fp = fopen(filePath, "r");
+        printf("litebat: No file/path was provided\n");
+        exit (1);
     }
-    else
-    {
-        fp = fopen(stdin, "r");
-    }
-    if (!fp)
+    const char *filePath = args[optind];
+    Input *info = malloc(sizeof(Input));
+    info->fp = fopen(filePath, "r");
+    if (!info->fp)
     {
         perror("litebat");
         exit(1);
     }
-    return fp;
+    if (isatty(fileno(info->fp)))
+    {
+        info->isatty = true;
+    }
+    else
+    {
+        info->isatty = false;
+    }
+
+    return info;
 }
 
 
