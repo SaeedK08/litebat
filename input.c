@@ -11,7 +11,7 @@
 struct Input
 {
     bool isatty;
-    FILE *fp;
+    const char *path;
 };
 
 
@@ -51,7 +51,9 @@ static void parseArgs(int argNum, char **args)
 
 Input* readInput(int argc, char **args)
 {
-    if (argc == 1)
+    parseArgs(argc, args);
+
+    if (argc == 1 || argc == optind)
     {
         char temp;
         while(1)
@@ -61,21 +63,23 @@ Input* readInput(int argc, char **args)
         }
     }
 
-    parseArgs(argc, args);
-    if (argc == optind)
-    {
-        printf("litebat: No file/path was provided\n");
-        exit (1);
-    }
     const char *filePath = args[optind];
     Input *info = malloc(sizeof(Input));
-    info->fp = fopen(filePath, "r");
-    if (!info->fp)
+    struct stat st;
+    stat(filePath, &st);                                        // Copy the meta data of path to st
+    if (S_ISDIR(st.st_mode))
+    {
+        fprintf(stderr, "litebat: %s is a directory\n" ,filePath);
+        exit(1);
+    }
+    FILE* fp = fopen(filePath, "r");
+    if (!fp)
     {
         perror("litebat");
         exit(1);
     }
-    if (isatty(fileno(info->fp)))
+
+    if (isatty(fileno(fp)))
     {
         info->isatty = true;
     }
@@ -84,12 +88,12 @@ Input* readInput(int argc, char **args)
         info->isatty = false;
     }
 
+    fclose(fp);
+    info->path = filePath;
+
     return info;
 }
 
 
 
 
-/** TODO
- * Error handeling if the provided argument is a directory
- */
