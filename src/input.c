@@ -13,7 +13,7 @@ struct Input
     bool isatty;
     const char *path;
 };
-
+// static Input fileInfo;
 
 static void parseArgs(int argNum, char **args)
 {
@@ -49,7 +49,7 @@ static void parseArgs(int argNum, char **args)
 
 }
 
-Input* readInput(int argc, char **args)
+Input* read_input(int argc, char **args)
 {
     parseArgs(argc, args);
 
@@ -64,9 +64,13 @@ Input* readInput(int argc, char **args)
     }
 
     const char *filePath = args[optind];
-    Input *info = malloc(sizeof(Input));
+    Input *fileInfo = malloc(sizeof(Input));
     struct stat st;
-    stat(filePath, &st);                                        // Copy the meta data of path to st
+    if ((stat(filePath, &st)) == -1)
+    {
+        perror("litebat");
+        exit(1);
+    }                                        // Copy the meta data of path to st
     if (S_ISDIR(st.st_mode))
     {
         fprintf(stderr, "litebat: %s is a directory\n" ,filePath);
@@ -80,17 +84,31 @@ Input* readInput(int argc, char **args)
         exit(1);
     }
 
-    if (isatty(fileno(fp)))
+    // if (S_ISFIFO(st.st_mode))
+    // {
+    //     fileInfo->isatty = false;
+    // }
+    if (isatty(STDIN_FILENO))
     {
-        info->isatty = true;
+        fileInfo->isatty = true;
     }
     else
     {
-        info->isatty = false;
+        fileInfo->isatty = false;
     }
 
     fclose(fp);
-    info->path = filePath;
+    fileInfo->path = filePath;
 
-    return info;
+    return fileInfo;
+}
+
+char const* get_file_name(const Input *fileInfo)
+{
+    return fileInfo->path;
+}
+
+bool is_input_tty(const Input* fileInfo)
+{
+    return fileInfo->isatty;
 }

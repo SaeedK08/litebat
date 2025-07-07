@@ -5,7 +5,7 @@ INCDIR := include
 
 ## Compiler
 CC := clang
-CFLAGS := -g -Wall -Wextra -MMD -MP
+CFLAGS := -g -Wall -Wextra -MMD -MP 
 
 
 ## Find all .c files and generate .o file names
@@ -20,15 +20,21 @@ TARGET := $(BINDIR)/main
 all: $(TARGET)
 
 ## Link object files to final binary
-$(TARGET): $(OBJ)
-	@mkdir -p $(BINDIR)
+$(TARGET): $(OBJ) | $(BINDIR)
+#@mkdir -p $(BINDIR)
 	$(CC) $^ -o $@
 
 ## Compile each .c to .o
-$(OBJDIR)/%.o: $(SRCDIR)/%.c $(INCDIR)/%.h
-	@mkdir -p $(OBJDIR)
+$(OBJDIR)/%.o: $(SRCDIR)/%.c | $(OBJDIR)
+#@mkdir -p $(OBJDIR)
 	$(CC) $(CFLAGS) -c $< -o $@
-	
+
+$(OBJDIR):
+	@mkdir $(OBJDIR)
+
+$(BINDIR): 
+	@mkdir $(BINDIR)
+
 #Run the app
 run: all
 	./$(TARGET)
@@ -36,6 +42,8 @@ run: all
 ## Clean up
 clean:
 	rm -rf $(OBJDIR) $(BINDIR)
+
+-include $(OBJ:.o=.d)
 
 
 
