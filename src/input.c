@@ -1,4 +1,4 @@
-#include "input.h"
+#include "../include/input.h"
 
 // void inputDescription()
 // {
@@ -72,6 +72,7 @@ Input* readInput(int argc, char **args)
         fprintf(stderr, "litebat: %s is a directory\n" ,filePath);
         exit(1);
     }
+    
     FILE* fp = fopen(filePath, "r");
     if (!fp)
     {
@@ -93,7 +94,3 @@ Input* readInput(int argc, char **args)
 
     return info;
 }
-
-
-
-

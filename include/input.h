@@ -7,7 +7,6 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
-
 typedef struct Input Input;
 Input* readInput (int argc, char ** args);
 

@@ -1,4 +1,4 @@
-#include "input.h"
+#include "../include/input.h"
 
 int main (int argc, char **argv)
 {
@@ -6,4 +6,9 @@ int main (int argc, char **argv)
     info = readInput(argc, argv);
 
     return 0;
+}
+
+void func()
+{
+    return;
 }
