@@ -6,9 +6,12 @@
 #include <stdbool.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <sys/errno.h>
+#include <string.h>
 
 typedef struct Input Input;
-Input* read_input(int argc, char **args);
+void parseArgs(int argNum, char **args);
+Input* read_input(char *args, int *exitVale);
 char const* get_file_name(const Input* fileInfo);
 bool is_input_tty(const Input* fileInfo);
 

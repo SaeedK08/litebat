@@ -13,9 +13,8 @@ struct Input
     bool isatty;
     const char *path;
 };
-// static Input fileInfo;
 
-static void parseArgs(int argNum, char **args)
+void parseArgs(int argNum, char **args)
 {
     int opt;
     while((opt = getopt(argNum, args, "a:b:c")) != -1)
@@ -49,39 +48,33 @@ static void parseArgs(int argNum, char **args)
 
 }
 
-Input* read_input(int argc, char **args)
+Input* read_input(char *arg, int *exitValue)
 {
-    parseArgs(argc, args);
-
-    if (argc == 1 || argc == optind)
-    {
-        char temp;
-        while(1)
-        {
-            scanf("%c" ,&temp);
-            printf("%c" ,temp);
-        }
-    }
-
-    const char *filePath = args[optind];
+    
+    const char *filePath = arg;
     Input *fileInfo = malloc(sizeof(Input));
-    struct stat st;
+    
+    struct stat st;                                         // Copy the meta data of path to st
     if ((stat(filePath, &st)) == -1)
     {
-        perror("litebat");
-        exit(1);
-    }                                        // Copy the meta data of path to st
+        (*exitValue) = 1;
+        fprintf(stderr, "litebat: %s: %s\n" ,filePath, strerror(errno));
+        return NULL;
+    }              
+
     if (S_ISDIR(st.st_mode))
     {
-        fprintf(stderr, "litebat: %s is a directory\n" ,filePath);
-        exit(1);
+        (*exitValue) = 1;
+        fprintf(stderr, "litebat: %s: Is a directory\n" ,filePath);
+        return NULL;
     }
     
     FILE* fp = fopen(filePath, "r");
     if (!fp)
     {
-        perror("litebat");
-        exit(1);
+        (*exitValue) = 1;
+        fprintf(stderr, "litebat: %s: %s\n" ,filePath, strerror(errno));
+        return NULL;
     }
 
     // if (S_ISFIFO(st.st_mode))
@@ -100,6 +93,7 @@ Input* read_input(int argc, char **args)
     fclose(fp);
     fileInfo->path = filePath;
 
+    
     return fileInfo;
 }
 

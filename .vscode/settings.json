@@ -2,6 +2,7 @@
     "files.associations": {
         "string.h": "c",
         "unistd.h": "c",
-        "stat.h": "c"
+        "stat.h": "c",
+        "input.h": "c"
     }
 }
