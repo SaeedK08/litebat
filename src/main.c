@@ -4,11 +4,8 @@
 int main (int argc, char **argv)
 {
     int exitValue = 0;
+    const char *fileName = NULL;
     parseArgs(argc, argv);
-    bool istty = check_input_source();
-    if (istty) printf("Input comming from terminal\n");
-    else printf("Input coming from non-tty stdin or pipe\n");
-    
     if ((argc == 1 && isatty(STDIN_FILENO)) || (argc == optind && isatty(STDIN_FILENO)))
     {
         char temp;
@@ -18,14 +15,20 @@ int main (int argc, char **argv)
             printf("%c" ,temp);
         }
     }
-    for (int i = optind; i < argc; i++)
+
+    bool istty = check_input_source();
+    if (!istty)
     {
-        Input *fileInfo = read_input(argv[i],&exitValue);
-        if (!fileInfo) continue;
-        const char* fileName = get_file_name(fileInfo);
-        // bool isatty = is_input_tty(fileInfo);
-        print_output(fileName, istty);
-        free(fileInfo);
+        print_output(NULL, istty);
+    }
+    else 
+    {
+        for (int i = optind; i < argc; i++)
+        {
+            fileName = read_input(argv[i],&exitValue);
+            if (!fileName) continue;
+            print_output(fileName, istty);
+        }
     }
 
     if (exitValue) return 1;

@@ -8,11 +8,11 @@
 
 // }
 
-struct Input
-{
-   // bool isatty;
-    const char *path;
-};
+// struct Input
+// {
+//    // bool isatty;
+//     const char *path;
+// };
 
 void parseArgs(int argNum, char **args)
 {
@@ -48,11 +48,9 @@ void parseArgs(int argNum, char **args)
 
 }
 
-Input* read_input(char *arg, int *exitValue)
+char* read_input(char *arg, int *exitValue)
 {
-    
-    const char *filePath = arg;
-    Input *fileInfo = malloc(sizeof(Input));
+    char *filePath = arg;
     
     struct stat st;                                         // Copy the meta data of path to st
     if ((stat(filePath, &st)) == -1)
@@ -81,28 +79,15 @@ Input* read_input(char *arg, int *exitValue)
     // {
     //     fileInfo->isatty = false;
     // }
-    // if (isatty(STDIN_FILENO))
-    // {
-    //     printf("Input is a tty\n");
-    //     fileInfo->isatty = true;
-    // }
-    // else
-    // {
-    //     printf("Input is from STDIN / PIPE\n");
-    //     fileInfo->isatty = false;
-    // }
 
     fclose(fp);
-    fileInfo->path = filePath;
-
-    
-    return fileInfo;
+    return filePath;
 }
 
-char const* get_file_name(const Input *fileInfo)
-{
-    return fileInfo->path;
-}
+// char const* get_file_name(const Input *fileInfo)
+// {
+//     return fileInfo->path;
+// }
 
 // bool is_input_tty(const Input* fileInfo)
 // {
@@ -120,6 +105,3 @@ bool check_input_source(void)
         return false;
     }
 }
-
-
-// TODO: Work on piping 

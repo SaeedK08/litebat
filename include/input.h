@@ -12,8 +12,8 @@
 typedef struct Input Input;
 void parseArgs(int argNum, char **args);
 bool check_input_source(void);
-Input* read_input(char *args, int *exitVale);
-char const* get_file_name(const Input* fileInfo);
+char* read_input(char *args, int *exitVale);
+// char const* get_file_name(const Input* fileInfo);
 // bool is_input_tty(const Input* fileInfo);
 
 #endif

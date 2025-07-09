@@ -3,6 +3,6 @@
 #include <stdbool.h>
 #include "../include/input.h"
 
-void print_output(char const* fileName, bool isatty);
+void print_output(char const* fileName, bool istty);
 
 #endif
