@@ -10,7 +10,7 @@
 
 struct Input
 {
-    bool isatty;
+   // bool isatty;
     const char *path;
 };
 
@@ -81,14 +81,16 @@ Input* read_input(char *arg, int *exitValue)
     // {
     //     fileInfo->isatty = false;
     // }
-    if (isatty(STDIN_FILENO))
-    {
-        fileInfo->isatty = true;
-    }
-    else
-    {
-        fileInfo->isatty = false;
-    }
+    // if (isatty(STDIN_FILENO))
+    // {
+    //     printf("Input is a tty\n");
+    //     fileInfo->isatty = true;
+    // }
+    // else
+    // {
+    //     printf("Input is from STDIN / PIPE\n");
+    //     fileInfo->isatty = false;
+    // }
 
     fclose(fp);
     fileInfo->path = filePath;
@@ -102,7 +104,22 @@ char const* get_file_name(const Input *fileInfo)
     return fileInfo->path;
 }
 
-bool is_input_tty(const Input* fileInfo)
+// bool is_input_tty(const Input* fileInfo)
+// {
+//     return fileInfo->isatty;
+// }
+
+bool check_input_source(void)
 {
-    return fileInfo->isatty;
+    if (isatty(STDIN_FILENO))
+    {
+        return true;
+    }
+    else 
+    {
+        return false;
+    }
 }
+
+
+// TODO: Work on piping 
